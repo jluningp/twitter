@@ -7,15 +7,22 @@
 //
 
 import UIKit
+import BDBOAuth1Manager
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    var window: UIWindow?
-
+    var window: UIWindow? = UIWindow(frame: UIScreen.mainScreen().bounds)
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        if User.currentUser == nil {
+            let viewController = LoginViewController()
+            window!.rootViewController = UINavigationController(rootViewController: viewController)
+        } else {
+            let viewController = ViewController()
+            window!.rootViewController = UINavigationController(rootViewController: viewController)
+        }
+        window!.makeKeyAndVisible()
         return true
     }
 
@@ -39,6 +46,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+    
+    func application(app: UIApplication, openURL url: NSURL, options: [String : AnyObject]) -> Bool {
+        if let urlQuery = url.query {
+            APICall.logInAndSetUser(urlQuery, toExecute: goToMainScreen)
+        } else {
+            Error.callErrorAndLogout("Failed to log in")
+            return false
+        }
+        return true
+    }
+    
+    func goToMainScreen() {
+        let viewController = ViewController()
+        window!.rootViewController = UINavigationController(rootViewController: viewController)
+
     }
 
 
