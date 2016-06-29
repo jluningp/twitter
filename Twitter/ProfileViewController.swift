@@ -31,10 +31,14 @@ class ProfileViewController: UIViewController {
     var newTweet : UIBarButtonItem?
     var user : User?
     
+    var loadingMoreView : InfiniteScrollActivityView?
+    var numberOfTweets : Int = 20
+    var isMoreDataLoading : Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        dataSource = DataSource(cell: "cell", tweets: [Tweet](), segue: segue, toUser: self.viewProfile)
+        dataSource = DataSource(cell: "cell", tweets: [Tweet](), segue: segue, toUser: self.viewProfile, scrolling: self.infiniteScroll)
         
         newTweet = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(makeNewTweet(_:)))
         navigationItem.rightBarButtonItem = newTweet
@@ -137,6 +141,15 @@ class ProfileViewController: UIViewController {
             
             tableView.translatesAutoresizingMaskIntoConstraints = false
         }
+        
+        let frame = CGRectMake(0, tableView!.contentSize.height, tableView!.bounds.size.width, InfiniteScrollActivityView.defaultHeight)
+        loadingMoreView = InfiniteScrollActivityView(frame: frame)
+        loadingMoreView!.hidden = true
+        tableView!.addSubview(loadingMoreView!)
+        
+        var insets = tableView!.contentInset;
+        insets.bottom += InfiniteScrollActivityView.defaultHeight;
+        tableView!.contentInset = insets
         
         NSLayoutConstraint(item: tableView!,
                            attribute: .Leading,
@@ -497,7 +510,7 @@ class ProfileViewController: UIViewController {
     
     func refreshTweets(closure : (dict : [NSDictionary]?) -> Void) {
         if let user = user {
-            APICall.useProfileTweets(user, useTweets: closure)
+            APICall.useProfileTweets(user, useTweets: closure, count: numberOfTweets)
         }
     }
     
@@ -540,6 +553,7 @@ class ProfileViewController: UIViewController {
                 }
             }
         }
+        self.numberOfTweets = 20
     }
     
     func makeNewTweet(sender: AnyObject) {
@@ -556,6 +570,31 @@ class ProfileViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func infiniteScroll(scrollView : UIScrollView) {
+        if (!isMoreDataLoading) {
+            // Calculate the position of one screen length before the bottom of the results
+            let scrollViewContentHeight = tableView!.contentSize.height
+            let scrollOffsetThreshold = scrollViewContentHeight - tableView!.bounds.size.height
+            
+            // When the user has scrolled past the threshold, start requesting
+            if(scrollView.contentOffset.y > scrollOffsetThreshold && tableView!.dragging) {
+                let frame = CGRectMake(0, tableView!.contentSize.height, tableView!.bounds.size.width, InfiniteScrollActivityView.defaultHeight)
+                loadingMoreView?.frame = frame
+                loadingMoreView!.startAnimating()
+                
+                isMoreDataLoading = true
+                numberOfTweets += 20
+                
+                refreshTweets() { (dict : [NSDictionary]?) -> Void in
+                    self.useTweets(dict)
+                    self.isMoreDataLoading = false
+                    self.loadingMoreView!.stopAnimating()
+                }
+                
+            }
+        }
     }
     
     

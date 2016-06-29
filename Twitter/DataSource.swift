@@ -8,17 +8,20 @@
 
 import UIKit
 
-class DataSource: NSObject, UITableViewDataSource, UITableViewDelegate {
+class DataSource: NSObject, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate {
     var cellIdentifier : String
     var tweets : [Tweet]
     var segue : (tweet : Tweet) -> Void
     var toUser : (user : User) -> Void
+    var isMoreDataLoading : Bool = false
+    var scrolling : (scrollView : UIScrollView) -> Void
     
-    init(cell : String, tweets : [Tweet], segue : (tweet: Tweet) -> Void, toUser : (user : User) -> Void) {
+    init(cell : String, tweets : [Tweet], segue : (tweet: Tweet) -> Void, toUser : (user : User) -> Void, scrolling : (scrollView : UIScrollView) -> Void) {
         self.cellIdentifier = cell
         self.tweets = tweets
         self.segue = segue
         self.toUser = toUser
+        self.scrolling = scrolling
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -36,4 +39,9 @@ class DataSource: NSObject, UITableViewDataSource, UITableViewDelegate {
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         segue(tweet: tweets[indexPath.row])
     }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        self.scrolling(scrollView: scrollView)
+    }
+
 }

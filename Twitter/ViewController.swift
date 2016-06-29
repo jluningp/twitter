@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITableViewDelegate {
 
     var tableView : UITableView?
     var navigationBar : UINavigationBar?
@@ -18,10 +18,15 @@ class ViewController: UIViewController {
     var newTweet : UIBarButtonItem?
     var myProfile : UIBarButtonItem?
     
+    var isMoreDataLoading : Bool = false
+    var numberOfTweets : Int = 20
+    
+    var loadingMoreView : InfiniteScrollActivityView?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        dataSource = DataSource(cell: "cell", tweets: [Tweet](), segue: segue, toUser: self.viewProfile)
+        dataSource = DataSource(cell: "cell", tweets: [Tweet](), segue: segue, toUser: self.viewProfile, scrolling: self.infiniteScroll)
         
         newTweet = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(makeNewTweet(_:)))
         navigationItem.rightBarButtonItem = newTweet
@@ -86,6 +91,16 @@ class ViewController: UIViewController {
                                constant: 10.0).active = true
         }
         
+        let frame = CGRectMake(0, tableView!.contentSize.height, tableView!.bounds.size.width, InfiniteScrollActivityView.defaultHeight)
+        loadingMoreView = InfiniteScrollActivityView(frame: frame)
+        loadingMoreView!.hidden = true
+        tableView!.addSubview(loadingMoreView!)
+        
+        var insets = tableView!.contentInset;
+        insets.bottom += InfiniteScrollActivityView.defaultHeight;
+        tableView!.contentInset = insets
+
+        
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshControlAction(_:)), forControlEvents: UIControlEvents.ValueChanged)
         tableView!.insertSubview(refreshControl, atIndex: 0)
@@ -95,8 +110,12 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
     }
     
+    override func viewWillAppear(animated: Bool) {
+        self.numberOfTweets = 20
+    }
+    
     func refreshTweets(closure : (dict : [NSDictionary]?) -> Void) {
-        APICall.useHomeScreenTweets(closure)
+        APICall.useHomeScreenTweets(numberOfTweets, useTweets: closure)
     }
     
     func refreshControlAction(refreshControl: UIRefreshControl) {
@@ -146,7 +165,33 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    func infiniteScroll(scrollView : UIScrollView) {
+        if (!isMoreDataLoading) {
+            // Calculate the position of one screen length before the bottom of the results
+            let scrollViewContentHeight = tableView!.contentSize.height
+            let scrollOffsetThreshold = scrollViewContentHeight - tableView!.bounds.size.height
+            
+            // When the user has scrolled past the threshold, start requesting
+            if(scrollView.contentOffset.y > scrollOffsetThreshold && tableView!.dragging) {
+                let frame = CGRectMake(0, tableView!.contentSize.height, tableView!.bounds.size.width, InfiniteScrollActivityView.defaultHeight)
+                loadingMoreView?.frame = frame
+                loadingMoreView!.startAnimating()
+                
+                isMoreDataLoading = true
+                numberOfTweets += 20
+                
+                refreshTweets() { (dict : [NSDictionary]?) -> Void in
+                    self.setTweets(dict)
+                    self.isMoreDataLoading = false
+                    self.loadingMoreView!.stopAnimating()
+                }
+                
+            }
+        }
+    }
 
+        
 
 }
 
