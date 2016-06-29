@@ -17,17 +17,25 @@ class Tweet {
     var id : String?
     var alreadyFavorited : Bool?
     var alreadyRetweeted : Bool?
+    var screenName : String?
+    var user : User?
+    var retweetCount : Int?
+    var favoriteCount : Int?
     
     init(tweetDictionary : NSDictionary) {
         self.text = tweetDictionary["text"] as? String
         if let user = tweetDictionary["user"] {
             self.userName = user["name"] as? String
             self.profilePic = user["profile_image_url_https"] as? String
+            self.screenName = user["screen_name"] as? String
+            self.user = User(dictionary: user as! NSDictionary)
         }
         self.timeStamp = convertToNSDate(tweetDictionary["created_at"] as? String)
         self.id = tweetDictionary["id_str"] as? String
         self.alreadyFavorited = tweetDictionary["favorited"] as? Bool
         self.alreadyRetweeted = tweetDictionary["retweeted"] as? Bool
+        self.retweetCount = tweetDictionary["retweet_count"] as? Int
+        self.favoriteCount = tweetDictionary["favorite_count"] as? Int
     }
     
     func convertToNSDate(str : String?) -> NSDate? {

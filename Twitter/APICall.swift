@@ -73,6 +73,23 @@ class APICall {
 
     }
     
+    class func refreshUser(closure : () -> Void) {
+        let apiURL = NSURL(string: "https://api.twitter.com")
+        let twitterClient = BDBOAuth1SessionManager(baseURL: apiURL!, consumerKey: "rhsRQQl7HsJpv1V84AceVNkgu", consumerSecret: "NBOGQCnTIYP9hH970K8z9Gn5fvBSrg72vDWw3im3YZ9rG5N4O1")
+        
+        twitterClient.GET("1.1/account/verify_credentials.json", parameters: nil, progress: nil, success: { (task, response) in
+            
+            let userDictionary = response as! NSDictionary
+            User.currentUser = User(dictionary: userDictionary)
+            
+            closure()
+            
+            }, failure: { (task, error) in
+                Error.callErrorAndLogout(error.localizedDescription)
+        })
+
+    }
+    
     class func logInAndSetUser(urlQuery: String, toExecute: () -> Void ) {
         let requestToken = BDBOAuth1Credential(queryString: urlQuery)
         let apiURL = NSURL(string: "https://api.twitter.com")
@@ -120,14 +137,38 @@ class APICall {
         }
     }
     
-    class func retweetTweet(tweet: Tweet) {
+    class func useProfileTweets(user : User, useTweets : (tweets : [NSDictionary]?) -> Void) {
+        if canMakeAPICall() {
+            let apiURL = NSURL(string: "https://api.twitter.com")
+            if let apiURL = apiURL {
+                let twitterClient = BDBOAuth1SessionManager(baseURL: apiURL, consumerKey: "rhsRQQl7HsJpv1V84AceVNkgu", consumerSecret: "NBOGQCnTIYP9hH970K8z9Gn5fvBSrg72vDWw3im3YZ9rG5N4O1")
+                
+                twitterClient.GET("1.1/statuses/user_timeline.json?screen_name=\(user.screenname!)", parameters: nil, progress: nil, success: { (task, response) in
+                    let tweets = response as! [NSDictionary]
+                    useTweets(tweets: tweets)
+                    }, failure: { (task, error) in
+                        Error.callErrorAndLogout("\(error.localizedDescription)")
+                })
+            } else {
+                Error.callErrorAndLogout("API URL was nil")
+            }
+        } else {
+            Error.callErrorAndNotify("Exceeded API Limit")
+            useTweets(tweets: nil)
+        }
+    }
+    
+    
+    class func retweetTweet(tweet: Tweet, toDo : (tweet : Tweet) -> Void) {
         let apiURL = NSURL(string: "https://api.twitter.com")
         if let apiURL = apiURL {
             let twitterClient = BDBOAuth1SessionManager(baseURL: apiURL, consumerKey: "rhsRQQl7HsJpv1V84AceVNkgu", consumerSecret: "NBOGQCnTIYP9hH970K8z9Gn5fvBSrg72vDWw3im3YZ9rG5N4O1")
             
             twitterClient.POST("1.1/statuses/retweet/\(tweet.id!).json", parameters: nil, progress: nil, success: { (task, response) in
                 let tweet = response as! NSDictionary
-                print(tweet)
+                
+                toDo(tweet : Tweet(tweetDictionary: tweet))
+                
                 }, failure: { (task, error) in
                     Error.callErrorAndNotify("\(error.localizedDescription)")
             })
@@ -136,7 +177,7 @@ class APICall {
         }
     }
 
-    class func favoriteTweet(tweet: Tweet, unfavorite : Bool) {
+    class func favoriteTweet(tweet: Tweet, unfavorite : Bool, toDo : (tweet : Tweet) -> Void) {
         let apiURL = NSURL(string: "https://api.twitter.com")
         if let apiURL = apiURL {
             let twitterClient = BDBOAuth1SessionManager(baseURL: apiURL, consumerKey: "rhsRQQl7HsJpv1V84AceVNkgu", consumerSecret: "NBOGQCnTIYP9hH970K8z9Gn5fvBSrg72vDWw3im3YZ9rG5N4O1")
@@ -146,6 +187,29 @@ class APICall {
                 postURL = "1.1/favorites/destroy.json?id=\(tweet.id!)"
             }
             
+            twitterClient.POST(postURL, parameters: nil, progress: nil, success: {(task, response) in
+                    let tweetDict = response as? NSDictionary
+                    let tweet = Tweet(tweetDictionary: tweetDict!)
+                    toDo(tweet: tweet)
+                }, failure: { (task, error) in
+                Error.callErrorAndNotify(error.localizedDescription)
+            })
+        } else {
+            Error.callErrorAndLogout("API URL was nil")
+        }
+    }
+    
+    class func sendTweet(status : String, reply : String?) {
+        let apiURL = NSURL(string: "https://api.twitter.com")
+        if let apiURL = apiURL {
+            let twitterClient = BDBOAuth1SessionManager(baseURL: apiURL, consumerKey: "rhsRQQl7HsJpv1V84AceVNkgu", consumerSecret: "NBOGQCnTIYP9hH970K8z9Gn5fvBSrg72vDWw3im3YZ9rG5N4O1")
+            
+            let urlStatus = status.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
+            var postURL = "https://api.twitter.com/1.1/statuses/update.json?status=\(urlStatus!)"
+            if let reply = reply {
+                postURL += "&in_reply_to_status_id=\(reply)"
+            }
+            
             twitterClient.POST(postURL, parameters: nil, progress: nil, success: nil, failure: { (task, error) in
                 Error.callErrorAndNotify(error.localizedDescription)
             })
@@ -153,6 +217,7 @@ class APICall {
             Error.callErrorAndLogout("API URL was nil")
         }
     }
+    
 
 
     class func canMakeAPICall() -> Bool {
@@ -182,5 +247,50 @@ class APICall {
             return true
         }
     }
+    
+    class func getRetweets(tweet: Tweet, useTweets : (tweets : [NSDictionary]) -> Void) {
+        let apiURL = NSURL(string: "https://api.twitter.com")
+        if let apiURL = apiURL {
+            let twitterClient = BDBOAuth1SessionManager(baseURL: apiURL, consumerKey: "rhsRQQl7HsJpv1V84AceVNkgu", consumerSecret: "NBOGQCnTIYP9hH970K8z9Gn5fvBSrg72vDWw3im3YZ9rG5N4O1")
+            twitterClient.GET("1.1/statuses/retweeters/ids.json?id=\(tweet.id!)&stringify_ids=true", parameters: nil, progress: nil, success: { (task, response) in
+                let tweetIDDict = response as? NSDictionary
+                var tweetIDs : [String]? = nil
+                if let tweetIDDict = tweetIDDict {
+                    tweetIDs = tweetIDDict["ids"] as? [String]
+                } else {
+                    Error.callErrorAndNotify("Tweet IDs Not Fetched")
+                }
+                if let tweetIDs = tweetIDs {
+                    var str = ""
+                    for id in tweetIDs {
+                        str += "," + id
+                    }
+                    let tweetStr = str.substringFromIndex(str.startIndex.advancedBy(1))
+                    if tweetIDs.count != 0 {
+                        twitterClient.GET("1.1/statuses/lookup.json?id=\(tweetStr)", parameters: nil, progress: nil, success: { (task, response) in
+                            let tweets = response as? [NSDictionary]
+                            
+                            if let tweets = tweets {
+                                useTweets(tweets: tweets)
+                            } else {
+                                Error.callErrorAndNotify("Tweets is nil")
+                            }
+                            
+                            }, failure: { (task, error) in
+                                Error.callErrorAndNotify("\(error.localizedDescription)")
+                        })
+                    } else {
+                        Error.callErrorAndNotify("Tweet IDs Not Fetched")
+                    }
+                }
+                
+                }, failure: { (task, error) in
+                    Error.callErrorAndNotify("\(error.localizedDescription)")
+            })
+        } else {
+            Error.callErrorAndLogout("API URL was nil")
+        }
+    }
+    
     
 }

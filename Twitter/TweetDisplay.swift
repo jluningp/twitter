@@ -1,40 +1,39 @@
 //
-//  TweetCell.swift
+//  TweetDisplay.swift
 //  Twitter
 //
-//  Created by Jeanne Luning Prak on 6/27/16.
+//  Created by Jeanne Luning Prak on 6/29/16.
 //  Copyright © 2016 Jeanne Luning Prak. All rights reserved.
 //
 
+import Foundation
 import UIKit
-import AFNetworking
 
-class TweetCell: UITableViewCell {
-    
-    var tweet : Tweet?
+class TweetDisplay {
+    var viewController : TweetViewController
+    var tweet : Tweet
     var tweetText : UILabel?
     var profilePic : UIImageView?
     var userName : UILabel?
     var timeStamp : UILabel?
     var favorite : UIButton?
     var retweet : UIButton?
-    var userSegue : ((user : User) -> Void)?
+    var reply : UIButton?
+    var myStyle : UIStyle
     
-    var myStyle = UIStyle()
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-        
+    
+    init(viewController : TweetViewController, tweet : Tweet) {
+        self.viewController = viewController
+        self.tweet = tweet
+        self.myStyle = UIStyle()
     }
     
-    required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:)")
+    func displayTweet() {
+        setUpTweetFeatures()
+        layout()
     }
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
+    func setUpTweetFeatures() {
         tweetText = UILabel()
         if let tweetText = tweetText {
             tweetText.numberOfLines = 0
@@ -42,19 +41,19 @@ class TweetCell: UITableViewCell {
             tweetText.font = myStyle.normalFont
             
             tweetText.backgroundColor = .whiteColor()
-            contentView.addSubview(tweetText)
+            viewController.view.addSubview(tweetText)
             
             tweetText.translatesAutoresizingMaskIntoConstraints = false
         }
         profilePic = UIImageView()
         if let profilePic = profilePic {
-            contentView.addSubview(profilePic)
+            viewController.view.addSubview(profilePic)
             
             profilePic.translatesAutoresizingMaskIntoConstraints = false
         }
         userName = UILabel()
         if let userName = userName {
-            contentView.addSubview(userName)
+            viewController.view.addSubview(userName)
             userName.font = myStyle.boldFont
             
             userName.translatesAutoresizingMaskIntoConstraints = false
@@ -62,7 +61,7 @@ class TweetCell: UITableViewCell {
         
         timeStamp = UILabel()
         if let timeStamp = timeStamp {
-            contentView.addSubview(timeStamp)
+            viewController.view.addSubview(timeStamp)
             timeStamp.font = myStyle.normalFont
             timeStamp.textColor = .grayColor()
             timeStamp.translatesAutoresizingMaskIntoConstraints = false
@@ -70,7 +69,7 @@ class TweetCell: UITableViewCell {
         
         favorite = UIButton()
         if let favorite = favorite {
-            contentView.addSubview(favorite)
+            viewController.view.addSubview(favorite)
             favorite.setTitleColor(.blackColor() , forState: .Normal)
             favorite.titleLabel!.font = myStyle.normalFont
             favorite.titleLabel!.textAlignment = .Left
@@ -80,7 +79,7 @@ class TweetCell: UITableViewCell {
         
         retweet = UIButton()
         if let retweet = retweet {
-            contentView.addSubview(retweet)
+            viewController.view.addSubview(retweet)
             retweet.setTitleColor(.blackColor() , forState: .Normal)
             retweet.titleLabel!.font = myStyle.normalFont
             retweet.titleLabel!.textAlignment = .Left
@@ -88,9 +87,19 @@ class TweetCell: UITableViewCell {
             retweet.translatesAutoresizingMaskIntoConstraints = false
         }
         
-        layout()
+        reply = UIButton()
+        if let reply = reply {
+            viewController.view.addSubview(reply)
+            reply.setTitleColor(.blackColor() , forState: .Normal)
+            reply.titleLabel!.font = myStyle.normalFont
+            reply.titleLabel!.textAlignment = .Left
+            reply.setTitle("Reply", forState: .Normal)
+            reply.translatesAutoresizingMaskIntoConstraints = false
+        }
+        makeUI(tweet)
+        
     }
-
+    
     func layout() {
         //Text of Tweet
         NSLayoutConstraint(item: tweetText!,
@@ -104,7 +113,7 @@ class TweetCell: UITableViewCell {
         NSLayoutConstraint(item: tweetText!,
                            attribute: .Trailing,
                            relatedBy: .Equal,
-                           toItem: contentView,
+                           toItem: viewController.view,
                            attribute: .TrailingMargin,
                            multiplier: 1.0,
                            constant: 0.0).active = true
@@ -130,8 +139,8 @@ class TweetCell: UITableViewCell {
         NSLayoutConstraint(item: profilePic!,
                            attribute: .Leading,
                            relatedBy: .Equal,
-                           toItem: contentView,
-                           attribute: .Leading,
+                           toItem: viewController.view,
+                           attribute: .LeadingMargin,
                            multiplier: 1.0,
                            constant: 10.0).active = true
         
@@ -146,10 +155,10 @@ class TweetCell: UITableViewCell {
         NSLayoutConstraint(item: profilePic!,
                            attribute: .Top,
                            relatedBy: .Equal,
-                           toItem: contentView,
-                           attribute: .TopMargin,
+                           toItem: viewController.topLayoutGuide,
+                           attribute: .Bottom,
                            multiplier: 1.0,
-                           constant: 0.0).active = true
+                           constant: 10.0).active = true
         
         NSLayoutConstraint(item: profilePic!,
                            attribute: .Height,
@@ -162,7 +171,7 @@ class TweetCell: UITableViewCell {
         NSLayoutConstraint(item: profilePic!,
                            attribute: .Width,
                            relatedBy: .Equal,
-                           toItem: contentView,
+                           toItem: viewController.view,
                            attribute: .Width,
                            multiplier: 0.0,
                            constant: 50.0).active = true
@@ -170,11 +179,11 @@ class TweetCell: UITableViewCell {
         NSLayoutConstraint(item: profilePic!,
                            attribute: .Bottom,
                            relatedBy: .LessThanOrEqual,
-                           toItem: contentView,
-                           attribute: .BottomMargin,
-                           multiplier: 1.0,
-                           constant: 0.0).active = true
- 
+                           toItem: viewController.view, //tableView
+            attribute: .Bottom, //.Top
+            multiplier: 0.5, //1.0
+            constant: 10.0).active = true
+        
         //Username
         
         NSLayoutConstraint(item: userName!,
@@ -188,18 +197,18 @@ class TweetCell: UITableViewCell {
         NSLayoutConstraint(item: userName!,
                            attribute: .Trailing,
                            relatedBy: .Equal,
-                           toItem: contentView,
-                           attribute: .Trailing,
+                           toItem: viewController.view,
+                           attribute: .TrailingMargin,
                            multiplier: 1.0,
                            constant: 0.0).active = true
         
         NSLayoutConstraint(item: userName!,
                            attribute: .Top,
                            relatedBy: .Equal,
-                           toItem: contentView,
-                           attribute: .TopMargin,
+                           toItem: viewController.topLayoutGuide,
+                           attribute: .Bottom,
                            multiplier: 1.0,
-                           constant: 0.0).active = true
+                           constant: 10.0).active = true
         
         NSLayoutConstraint(item: userName!,
                            attribute: .Bottom,
@@ -215,19 +224,19 @@ class TweetCell: UITableViewCell {
         NSLayoutConstraint(item: timeStamp!,
                            attribute: .Trailing,
                            relatedBy: .Equal,
-                           toItem: contentView,
-                           attribute: .Trailing,
+                           toItem: viewController.view,
+                           attribute: .TrailingMargin,
                            multiplier: 1.0,
                            constant: 0.0).active = true
- 
+        
         
         NSLayoutConstraint(item: timeStamp!,
                            attribute: .Top,
                            relatedBy: .Equal,
-                           toItem: contentView,
-                           attribute: .TopMargin,
+                           toItem: viewController.topLayoutGuide,
+                           attribute: .Bottom,
                            multiplier: 1.0,
-                           constant: 0.0).active = true
+                           constant: 10.0).active = true
         
         NSLayoutConstraint(item: timeStamp!,
                            attribute: .Bottom,
@@ -250,10 +259,10 @@ class TweetCell: UITableViewCell {
         NSLayoutConstraint(item: favorite!,
                            attribute: .Width,
                            relatedBy: .Equal,
-                           toItem: retweet,
+                           toItem: viewController.view,
                            attribute: .Width,
-                           multiplier: 1.0,
-                           constant: 0.0).active = true
+                           multiplier: 0.0,
+                           constant: 20.0).active = true
         
         NSLayoutConstraint(item: favorite!,
                            attribute: .Top,
@@ -263,14 +272,15 @@ class TweetCell: UITableViewCell {
                            multiplier: 1.0,
                            constant: 5.0).active = true
         
-        NSLayoutConstraint(item: favorite!,
-                           attribute: .Bottom,
-                           relatedBy: .Equal,
-                           toItem: contentView,
-                           attribute: .BottomMargin,
-                           multiplier: 1.0,
-                           constant: 0.0).active = true
-        
+        /*
+         NSLayoutConstraint(item: favorite!,
+         attribute: .Bottom,
+         relatedBy: .Equal,
+         toItem: viewController.view, //tableView,
+         attribute: .Bottom, //.Top,
+         multiplier: 0.5, //1.0
+         constant: 10.0).active = true
+         */
         NSLayoutConstraint(item: retweet!,
                            attribute: .Leading,
                            relatedBy: .Equal,
@@ -287,48 +297,66 @@ class TweetCell: UITableViewCell {
                            multiplier: 1.0,
                            constant: 5.0).active = true
         
-        NSLayoutConstraint(item: retweet!,
-                           attribute: .Bottom,
-                           relatedBy: .Equal,
-                           toItem: contentView,
-                           attribute: .BottomMargin,
-                           multiplier: 1.0,
-                           constant: 0.0).active = true
+        /*
+         NSLayoutConstraint(item: retweet!,
+         attribute: .Bottom,
+         relatedBy: .Equal,
+         toItem: viewController.view, //tableView,
+         attribute: .Bottom, //.Top,
+         multiplier: 0.5, //1.0
+         constant: 10.0).active = true
+         */
         
         NSLayoutConstraint(item: retweet!,
+                           attribute: .Width,
+                           relatedBy: .Equal,
+                           toItem: viewController.view,
+                           attribute: .Width,
+                           multiplier: 0.0,
+                           constant: 20.0).active = true
+        
+        NSLayoutConstraint(item: reply!,
+                           attribute: .Leading,
+                           relatedBy: .Equal,
+                           toItem: retweet,
                            attribute: .Trailing,
-                           relatedBy: .Equal,
-                           toItem: contentView,
-                           attribute: .TrailingMargin,
                            multiplier: 1.0,
-                           constant: 0.0).active = true
+                           constant: 20.0).active = true
         
+        NSLayoutConstraint(item: reply!,
+                           attribute: .Width,
+                           relatedBy: .Equal,
+                           toItem: viewController.view,
+                           attribute: .Width,
+                           multiplier: 0.0,
+                           constant: 50.0).active = true
+        
+        NSLayoutConstraint(item: reply!,
+                           attribute: .Top,
+                           relatedBy: .Equal,
+                           toItem: tweetText,
+                           attribute: .Bottom,
+                           multiplier: 1.0,
+                           constant: 5.0).active = true
+        
+        //tableViewLayout()
     }
     
     func makeUI(tweet: Tweet) {
-        tweetText?.text = tweet.text
-        userName?.text = tweet.userName
+        tweetText!.text = tweet.text
+        userName!.text = tweet.userName
         if let url = NSURL(string: tweet.profilePic!) {
-            profilePic?.setImageWithURL(url)
+            profilePic!.setImageWithURL(url)
         }
-        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        tap.delegate = self
-        
-        profilePic?.userInteractionEnabled = true
-        profilePic?.addGestureRecognizer(tap)
-        
-        
-        timeStamp?.text = tweet.getRelativeDate()
+        timeStamp!.text = tweet.getRelativeDate()
         self.tweet = tweet
         
-        favorite?.setTitle("<3 \(tweet.favoriteCount!)", forState: .Normal)
         favorite?.addTarget(self, action: #selector(TweetCell.runFavorite(_:)), forControlEvents: .TouchUpInside)
         if !(tweet.alreadyFavorited!) {
             favorite?.setTitleColor(.blackColor(), forState: .Normal)
         } else {
             favorite?.setTitleColor(.redColor(), forState: .Normal)
         }
-        retweet?.setTitle("RT \(tweet.retweetCount!)", forState: .Normal)
         if !(tweet.alreadyRetweeted!) {
             retweet?.addTarget(self, action: #selector(TweetCell.runRetweet(_:)), forControlEvents: .TouchUpInside)
             retweet?.enabled = true
@@ -338,44 +366,38 @@ class TweetCell: UITableViewCell {
             retweet?.setTitleColor(.grayColor(), forState: .Disabled)
             retweet?.setTitleColor(.grayColor(), forState: .Normal)
         }
+        
+        //reply?.addTarget(self, action: #selector(runReply(_:)), forControlEvents: .TouchUpInside)
     }
     
     func runFavorite(sender : AnyObject?) {
-        APICall.favoriteTweet(self.tweet!, unfavorite: tweet!.alreadyFavorited!,
+        APICall.favoriteTweet(self.tweet, unfavorite: tweet.alreadyFavorited!,
                               toDo: {(tweet : Tweet) in
                                 self.tweet = tweet
                                 self.favorite?.setTitle("<3 \(tweet.favoriteCount!)", forState: .Normal)
         })
-        if (tweet!.alreadyFavorited!) {
+        if (tweet.alreadyFavorited!) {
             favorite?.setTitleColor(.blackColor(), forState: .Normal)
-            tweet!.alreadyFavorited = false
+            tweet.alreadyFavorited = false
         } else {
             favorite?.setTitleColor(.redColor(), forState: .Normal)
         }
     }
     
     func runRetweet(sender : AnyObject?) {
-        APICall.retweetTweet(self.tweet!, toDo: {(tweet : Tweet) in
-                self.tweet = tweet
-                self.retweet?.setTitle("RT \(tweet.retweetCount!)", forState: .Normal)
-            })
+        APICall.retweetTweet(self.tweet, toDo: {(tweet : Tweet) in
+            self.tweet = tweet
+            self.retweet?.setTitle("RT \(tweet.retweetCount!)", forState: .Normal)
+        })
         retweet?.setTitleColor(.grayColor(), forState: .Normal)
         retweet?.setTitleColor(.grayColor(), forState: .Disabled)
         retweet?.enabled = false
     }
     
-    func setUserSegue(toUser : (user : User) -> Void) {
-        self.userSegue = toUser
+    func runReply(sender: AnyObject) {
+        let nextVC = TweetViewController()
+        nextVC.presetText = "@\(tweet.screenName!)"
+        nextVC.replyID = tweet.id!
+        viewController.navigationController?.presentViewController(nextVC, animated: true, completion: nil)
     }
-    
-    func handleTap(sender : AnyObject?) {
-        userSegue!(user: tweet!.user!)
-    }
-
-    override func setSelected(selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-
 }

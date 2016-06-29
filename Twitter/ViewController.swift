@@ -15,11 +15,19 @@ class ViewController: UIViewController {
     var style = UIStyle()
     var cellIdentifier = "cell"
     var dataSource : DataSource?
+    var newTweet : UIBarButtonItem?
+    var myProfile : UIBarButtonItem?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        dataSource = DataSource(cell: "cell", tweets: [Tweet](), segue: segue)
+        dataSource = DataSource(cell: "cell", tweets: [Tweet](), segue: segue, toUser: self.viewProfile)
+        
+        newTweet = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(makeNewTweet(_:)))
+        navigationItem.rightBarButtonItem = newTweet
+        
+        myProfile = UIBarButtonItem(barButtonSystemItem: .Bookmarks, target: self, action: #selector(viewMyProfile(_:)))
+        navigationItem.leftBarButtonItem = myProfile
         
         self.title = "Twitter"
         self.automaticallyAdjustsScrollViewInsets = false
@@ -101,7 +109,7 @@ class ViewController: UIViewController {
     func segue(tweet: Tweet) {
         let newVC = DetailsViewController()
         newVC.tweet = tweet
-        self.navigationController?.pushViewController(newVC, animated: false)
+        self.navigationController?.pushViewController(newVC, animated: true)
     }
     
     func setTweets(dict : [NSDictionary]?) {
@@ -117,6 +125,21 @@ class ViewController: UIViewController {
                 Error.callErrorAndLogout("tableView is nil")
             }
         }
+    }
+    
+    func makeNewTweet(sender: AnyObject) {
+        let nextVC = TweetViewController()
+        self.navigationController?.presentViewController(nextVC, animated: true, completion: nil)
+    }
+    
+    func viewMyProfile(sender : AnyObject) {
+        viewProfile(User.currentUser!)
+    }
+    
+    func viewProfile(user : User) {
+        let nextVC = ProfileViewController()
+        nextVC.user = user
+        self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
     override func didReceiveMemoryWarning() {

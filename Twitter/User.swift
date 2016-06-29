@@ -45,10 +45,16 @@ class User {
     var profileURL: NSURL?
     var tagline: NSString?
     var dictionary : NSDictionary?
+    var followers : Int?
+    var following : Int?
+    var tweets : Int?
     
     init(dictionary: NSDictionary) {
         name = dictionary["name"] as? String
-        screenname = dictionary["screenname"] as? String
+        screenname = dictionary["screen_name"] as? String
+        followers = dictionary["followers_count"] as? Int
+        following = dictionary["friends_count"] as? Int
+        tweets = dictionary["statuses_count"] as? Int
         
         let profileURLString = dictionary["profile_image_url_https"] as? String
         if let profileURLString = profileURLString {
