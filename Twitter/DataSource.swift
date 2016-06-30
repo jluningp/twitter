@@ -15,13 +15,15 @@ class DataSource: NSObject, UITableViewDataSource, UITableViewDelegate, UIScroll
     var toUser : (user : User) -> Void
     var isMoreDataLoading : Bool = false
     var scrolling : (scrollView : UIScrollView) -> Void
+    var navigationController : UINavigationController
     
-    init(cell : String, tweets : [Tweet], segue : (tweet: Tweet) -> Void, toUser : (user : User) -> Void, scrolling : (scrollView : UIScrollView) -> Void) {
+    init(cell : String, tweets : [Tweet], segue : (tweet: Tweet) -> Void, toUser : (user : User) -> Void, scrolling : (scrollView : UIScrollView) -> Void, navControl : UINavigationController) {
         self.cellIdentifier = cell
         self.tweets = tweets
         self.segue = segue
         self.toUser = toUser
         self.scrolling = scrolling
+        self.navigationController = navControl
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -33,6 +35,7 @@ class DataSource: NSObject, UITableViewDataSource, UITableViewDelegate, UIScroll
         cell.selectionStyle = .None
         cell.makeUI(tweets[indexPath.row])
         cell.setUserSegue(toUser)
+        cell.makeNavControl(self.navigationController)
         return cell
     }
     

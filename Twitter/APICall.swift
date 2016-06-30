@@ -159,12 +159,17 @@ class APICall {
     }
     
     
-    class func retweetTweet(tweet: Tweet, toDo : (tweet : Tweet) -> Void) {
+    class func retweetTweet(tweet: Tweet, toDo : (tweet : Tweet) -> Void, unReTweet : Bool) {
         let apiURL = NSURL(string: "https://api.twitter.com")
         if let apiURL = apiURL {
             let twitterClient = BDBOAuth1SessionManager(baseURL: apiURL, consumerKey: "rhsRQQl7HsJpv1V84AceVNkgu", consumerSecret: "NBOGQCnTIYP9hH970K8z9Gn5fvBSrg72vDWw3im3YZ9rG5N4O1")
             
-            twitterClient.POST("1.1/statuses/retweet/\(tweet.id!).json", parameters: nil, progress: nil, success: { (task, response) in
+            var url = "1.1/statuses/retweet/\(tweet.id!).json"
+            if unReTweet {
+                url = "1.1/statuses/unretweet/\(tweet.id!).json"
+            }
+            
+            twitterClient.POST(url, parameters: nil, progress: nil, success: { (task, response) in
                 let tweet = response as! NSDictionary
                 
                 toDo(tweet : Tweet(tweetDictionary: tweet))

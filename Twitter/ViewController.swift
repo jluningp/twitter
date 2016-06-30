@@ -26,7 +26,7 @@ class ViewController: UIViewController, UITableViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        dataSource = DataSource(cell: "cell", tweets: [Tweet](), segue: segue, toUser: self.viewProfile, scrolling: self.infiniteScroll)
+        dataSource = DataSource(cell: "cell", tweets: [Tweet](), segue: segue, toUser: self.viewProfile, scrolling: self.infiniteScroll, navControl: self.navigationController!)
         
         newTweet = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(makeNewTweet(_:)))
         navigationItem.rightBarButtonItem = newTweet
@@ -108,10 +108,6 @@ class ViewController: UIViewController, UITableViewDelegate {
         refreshTweets(setTweets)
         
         // Do any additional setup after loading the view, typically from a nib.
-    }
-    
-    override func viewWillAppear(animated: Bool) {
-        self.numberOfTweets = 20
     }
     
     func refreshTweets(closure : (dict : [NSDictionary]?) -> Void) {

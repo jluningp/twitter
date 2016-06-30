@@ -25,7 +25,7 @@ class LoginViewController: UIViewController {
         button = UIButton()
         
         if let button = button {
-            button.setTitle("Log In", forState: .Normal)
+            button.setTitle("Sign In With Twitter", forState: .Normal)
             button.backgroundColor = style.twitterColor
             button.setTitleColor(.whiteColor(), forState: .Normal)
             button.addTarget(self, action: #selector(loginOAuth), forControlEvents: UIControlEvents.TouchUpInside)

@@ -38,7 +38,7 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        dataSource = DataSource(cell: "cell", tweets: [Tweet](), segue: segue, toUser: self.viewProfile, scrolling: self.infiniteScroll)
+        dataSource = DataSource(cell: "cell", tweets: [Tweet](), segue: segue, toUser: self.viewProfile, scrolling: self.infiniteScroll, navControl: self.navigationController!)
         
         newTweet = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(makeNewTweet(_:)))
         navigationItem.rightBarButtonItem = newTweet
@@ -553,7 +553,6 @@ class ProfileViewController: UIViewController {
                 }
             }
         }
-        self.numberOfTweets = 20
     }
     
     func makeNewTweet(sender: AnyObject) {
