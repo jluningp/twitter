@@ -8,8 +8,9 @@
 
 import UIKit
 
-class TweetViewController: UIViewController {
+class TweetViewController: UIViewController, UITextViewDelegate {
 
+    var charCount : UILabel?
     var tweetEntry : UITextView?
     var postTweet : UIButton?
     var cancel : UIButton?
@@ -23,12 +24,25 @@ class TweetViewController: UIViewController {
         
         self.view.backgroundColor = .whiteColor()
         
+        charCount = UILabel()
+        if let charCount = charCount {
+            charCount.text = "140"
+            charCount.font = myStyle.normalFont
+            charCount.translatesAutoresizingMaskIntoConstraints = false
+            
+            self.view.addSubview(charCount)
+        }
+        
         tweetEntry = UITextView()
         if let tweetEntry = tweetEntry {
             tweetEntry.layer.borderWidth = 1
+            tweetEntry.layer.borderColor = UIColor.lightGrayColor().CGColor
             tweetEntry.layer.cornerRadius = 5
             tweetEntry.font = myStyle.normalFont
             tweetEntry.layer.masksToBounds = true
+            
+            tweetEntry.delegate = self
+            
             if let presetText = presetText {
                 tweetEntry.text = presetText
             }
@@ -54,6 +68,41 @@ class TweetViewController: UIViewController {
             cancel.addTarget(self, action: #selector(cancelEditor(_:)), forControlEvents: .TouchUpInside)
         }
         
+        //Character Count Box
+        
+        NSLayoutConstraint(item: charCount!,
+                           attribute: .Leading,
+                           relatedBy: .GreaterThanOrEqual,
+                           toItem: view,
+                           attribute: .LeadingMargin,
+                           multiplier: 1.0,
+                           constant: 0.0).active = true
+        
+        NSLayoutConstraint(item: charCount!,
+                           attribute: .Trailing,
+                           relatedBy: .Equal,
+                           toItem: view,
+                           attribute: .TrailingMargin,
+                           multiplier: 1.0,
+                           constant: 0.0).active = true
+        
+        NSLayoutConstraint(item: charCount!,
+                           attribute: .Top,
+                           relatedBy: .Equal,
+                           toItem: self.topLayoutGuide,
+                           attribute: .Bottom,
+                           multiplier: 1.0,
+                           constant: 0.0).active = true
+        
+        NSLayoutConstraint(item: charCount!,
+                           attribute: .Bottom,
+                           relatedBy: .Equal,
+                           toItem: tweetEntry,
+                           attribute: .Top,
+                           multiplier: 1.0,
+                           constant: 0.0).active = true
+        
+        
         //Tweet Entry Box
         
         NSLayoutConstraint(item: tweetEntry!,
@@ -75,7 +124,7 @@ class TweetViewController: UIViewController {
         NSLayoutConstraint(item: tweetEntry!,
                            attribute: .Top,
                            relatedBy: .Equal,
-                           toItem: self.topLayoutGuide,
+                           toItem: charCount,
                            attribute: .Bottom,
                            multiplier: 1.0,
                            constant: 0.0).active = true
@@ -172,6 +221,16 @@ class TweetViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    func textViewDidChange(textView: UITextView) {
+        var str = textView.text as String
+        if str.characters.count > 140 {
+            let index = str.startIndex.advancedBy(139)
+            str = String(str.characters.prefixThrough(index))
+            textView.text = str
+        }
+        charCount!.text = "\(140 - str.characters.count)"
     }
     
     func makeTweet(sender : AnyObject?) {

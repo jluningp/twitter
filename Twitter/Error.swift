@@ -7,11 +7,16 @@
 //
 
 import Foundation
+import UIKit
+
 
 class Error {
+    static var navMethod : (() -> Void)?
+    
     class func callErrorAndLogout(message : String) {
         print("Error: \(message) (Will Logout)")
         APICall.logout()
+        navMethod!()
     }
     
     class func callErrorAndNotify(message : String) {

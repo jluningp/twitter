@@ -31,7 +31,7 @@ class DataSource: NSObject, UITableViewDataSource, UITableViewDelegate, UIScroll
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TweetCell
+        let cell = TweetCell() //tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath) as! TweetCell
         cell.selectionStyle = .None
         cell.makeUI(tweets[indexPath.row])
         cell.setUserSegue(toUser)

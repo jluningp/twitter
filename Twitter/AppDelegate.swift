@@ -17,13 +17,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         if User.currentUser == nil {
             let viewController = LoginViewController()
-            window!.rootViewController = UINavigationController(rootViewController: viewController)
+            let navController = UINavigationController(rootViewController: viewController)
+            Error.navMethod = {() -> Void in
+                self.toLogoutScreen(navController)
+            }
+            window!.rootViewController = navController
         } else {
             let viewController = ViewController()
-            window!.rootViewController = UINavigationController(rootViewController: viewController)
+            let navController = UINavigationController(rootViewController: viewController)
+            Error.navMethod = {() -> Void in
+                self.toLogoutScreen(navController)
+            }
+            window!.rootViewController = navController
         }
         window!.makeKeyAndVisible()
         return true
+    }
+    
+    func toLogoutScreen(navController : UINavigationController) {
+        let nextVC = LoginViewController()
+        navController.presentViewController(nextVC, animated: false, completion: nil)
     }
 
     func applicationWillResignActive(application: UIApplication) {

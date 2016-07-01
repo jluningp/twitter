@@ -48,6 +48,7 @@ class User {
     var followers : Int?
     var following : Int?
     var tweets : Int?
+    var headerURL : NSURL?
     
     init(dictionary: NSDictionary) {
         name = dictionary["name"] as? String
@@ -59,6 +60,11 @@ class User {
         let profileURLString = dictionary["profile_image_url_https"] as? String
         if let profileURLString = profileURLString {
             profileURL = NSURL(string: profileURLString)
+        }
+        
+        let headerURLString = dictionary["profile_background_image_url_https"] as? String
+        if let headerURLString = headerURLString {
+            headerURL = NSURL(string: headerURLString)
         }
         
         tagline = dictionary["description"] as? String

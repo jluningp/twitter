@@ -20,11 +20,11 @@
 		DD0AF2181D2489F500703D21 /* InfiniteScrollActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0AF2171D2489F500703D21 /* InfiniteScrollActivityView.swift */; };
 		DD6BE9AD1D218D86008687B2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD6BE9AC1D218D86008687B2 /* AppDelegate.swift */; };
 		DD6BE9AF1D218D86008687B2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD6BE9AE1D218D86008687B2 /* ViewController.swift */; };
-		DD6BE9B41D218D86008687B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD6BE9B31D218D86008687B2 /* Assets.xcassets */; };
 		DD6BE9B71D218D86008687B2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DD6BE9B51D218D86008687B2 /* LaunchScreen.storyboard */; };
 		DD6BE9BF1D219036008687B2 /* UIStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD6BE9BE1D219036008687B2 /* UIStyle.swift */; };
 		DD6BE9C11D2195BC008687B2 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD6BE9C01D2195BC008687B2 /* DataSource.swift */; };
 		DD6BE9C31D21ACDC008687B2 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD6BE9C21D21ACDC008687B2 /* Error.swift */; };
+		DDEB4F581D27297E00B54C59 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DDEB4F571D27297E00B54C59 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,12 +43,12 @@
 		DD6BE9A91D218D86008687B2 /* Twitter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Twitter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD6BE9AC1D218D86008687B2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DD6BE9AE1D218D86008687B2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		DD6BE9B31D218D86008687B2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DD6BE9B61D218D86008687B2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DD6BE9B81D218D86008687B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DD6BE9BE1D219036008687B2 /* UIStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIStyle.swift; sourceTree = "<group>"; };
 		DD6BE9C01D2195BC008687B2 /* DataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		DD6BE9C21D21ACDC008687B2 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
+		DDEB4F571D27297E00B54C59 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E87635B35208DC3C649037A9 /* Pods-Twitter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Twitter.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Twitter/Pods-Twitter.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -141,7 +141,7 @@
 				DD0AF20D1D232EAA00703D21 /* Models */,
 				DD6BE9AC1D218D86008687B2 /* AppDelegate.swift */,
 				DD6BE9C01D2195BC008687B2 /* DataSource.swift */,
-				DD6BE9B31D218D86008687B2 /* Assets.xcassets */,
+				DDEB4F571D27297E00B54C59 /* Assets.xcassets */,
 				DD6BE9B51D218D86008687B2 /* LaunchScreen.storyboard */,
 				DD6BE9B81D218D86008687B2 /* Info.plist */,
 			);
@@ -210,8 +210,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DDEB4F581D27297E00B54C59 /* Assets.xcassets in Resources */,
 				DD6BE9B71D218D86008687B2 /* LaunchScreen.storyboard in Resources */,
-				DD6BE9B41D218D86008687B2 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

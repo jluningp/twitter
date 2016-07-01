@@ -17,6 +17,7 @@ class ProfileViewController: UIViewController {
     var profilePic : UIImageView?
     var userName : UILabel?
     var tagLine : UILabel?
+    var headerImage : UIImageView?
     
     var tweets : UILabel?
     var following : UILabel?
@@ -71,6 +72,20 @@ class ProfileViewController: UIViewController {
             }
             profilePic.translatesAutoresizingMaskIntoConstraints = false
             self.headerView!.addSubview(profilePic)
+        }
+        
+        headerImage = UIImageView()
+        if let headerImage = headerImage {
+            headerImage.image = UIImage(named: "defaultHeader")
+            if let user = user {
+                if let headerURL = user.headerURL {
+                    headerImage.setImageWithURL(headerURL)
+                }
+            }
+            headerImage.contentMode = .ScaleAspectFill
+            headerImage.clipsToBounds = true
+            headerImage.translatesAutoresizingMaskIntoConstraints = false
+            self.headerView!.addSubview(headerImage)
         }
         
         userName = UILabel()
@@ -195,7 +210,7 @@ class ProfileViewController: UIViewController {
                            attribute: .Leading,
                            relatedBy: .Equal,
                            toItem: view,
-                           attribute: .LeadingMargin,
+                           attribute: .Leading,
                            multiplier: 1.0,
                            constant: 0.0).active = true
         
@@ -203,7 +218,7 @@ class ProfileViewController: UIViewController {
                            attribute: .Trailing,
                            relatedBy: .Equal,
                            toItem: view,
-                           attribute: .TrailingMargin,
+                           attribute: .Trailing,
                            multiplier: 1.0,
                            constant: 0.0).active = true
 
@@ -215,13 +230,56 @@ class ProfileViewController: UIViewController {
                            multiplier: 1.0,
                            constant: -10.0).active = true
         
-        NSLayoutConstraint(item: profilePic!,
+        
+        
+        
+        NSLayoutConstraint(item: headerImage!,
                            attribute: .Top,
                            relatedBy: .Equal,
                            toItem: headerView,
-                           attribute: .TopMargin,
+                           attribute: .Top,
                            multiplier: 1.0,
                            constant: 0.0).active = true
+        
+        NSLayoutConstraint(item: headerImage!,
+                           attribute: .Leading,
+                           relatedBy: .Equal,
+                           toItem: headerView,
+                           attribute: .Leading,
+                           multiplier: 1.0,
+                           constant: 0.0).active = true
+        
+        NSLayoutConstraint(item: headerImage!,
+                           attribute: .Trailing,
+                           relatedBy: .Equal,
+                           toItem: headerView,
+                           attribute: .Trailing,
+                           multiplier: 1.0,
+                           constant: 0.0).active = true
+        
+        NSLayoutConstraint(item: headerImage!,
+                           attribute: .Bottom,
+                           relatedBy: .Equal,
+                           toItem: profilePic,
+                           attribute: .Top,
+                           multiplier: 1.0,
+                           constant: -5.0).active = true
+        
+        NSLayoutConstraint(item: headerImage!,
+                           attribute: .Width,
+                           relatedBy: .Equal,
+                           toItem: headerImage,
+                           attribute: .Height,
+                           multiplier: 3.0,
+                           constant: 0.0).active = true
+        
+        NSLayoutConstraint(item: profilePic!,
+                           attribute: .Top,
+                           relatedBy: .Equal,
+                           toItem: headerImage,
+                           attribute: .Bottom,
+                           multiplier: 1.0,
+                           constant: 5.0).active = true
         
         NSLayoutConstraint(item: profilePic!,
                            attribute: .Leading,
@@ -284,10 +342,10 @@ class ProfileViewController: UIViewController {
         NSLayoutConstraint(item: userName!,
                            attribute: .Top,
                            relatedBy: .Equal,
-                           toItem: headerView,
-                           attribute: .TopMargin,
+                           toItem: headerImage,
+                           attribute: .Bottom,
                            multiplier: 1.0,
-                           constant: 0.0).active = true
+                           constant: 5.0).active = true
         
         NSLayoutConstraint(item: userName!,
                            attribute: .Bottom,
