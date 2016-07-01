@@ -24,7 +24,7 @@ The following **required** functionality is complete:
 The following **optional** features are implemented:
 * [x] User can load more tweets once they reach the bottom of the feed using infinite loading similar to the actual Twitter client.
 * [x] User can unfavorite and it decrements the favorite count. 
-* [ ] User can unretweet and it decrements the favorite count. 
+* [x] User can unretweet and it decrements the favorite count. 
 * [ ] When composing, there is a countdown for the number of characters remaining for the tweet (out of 140)
 * [ ] After creating a new tweet, a user can view it in the timeline immediately without refetching the timeline from the network.
 * [x] User can reply to any tweet, and replies should are prefixed with the username and the reply_id is set when posting the tweet
@@ -34,7 +34,9 @@ The following **optional** features are implemented:
 * [x] Profile view should include that user's timeline
 
 The following **additional** features are implemented:
-
+- [x] User interface is created entirely in code without using interface builder
+- [x] Twitter icons used for retweet, favorite, and reply
+- 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
