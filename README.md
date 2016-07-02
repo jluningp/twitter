@@ -42,6 +42,8 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
+<img src='http://i.imgur.com/gE5ye8M.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+
 <a href="https://www.youtube.com/watch?v=W7UdBF1ir2M">Link to Video</a>
 
 Video created with QuickTime Player
