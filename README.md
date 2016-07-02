@@ -26,11 +26,7 @@ The following **optional** features are implemented:
 * [x] User can unfavorite and it decrements the favorite count. 
 * [x] User can unretweet and it decrements the favorite count. 
 * [x] When composing, there is a countdown for the number of characters remaining for the tweet (out of 140)
-* [ ] After creating a new tweet, a user can view it in the timeline immediately without refetching the timeline from the network.
 * [x] User can reply to any tweet, and replies should are prefixed with the username and the reply_id is set when posting the tweet
-* [ ] Links in tweets are clickable
-* [ ] User can switch between timeline, mentions, or profile view through a tab bar
-* [ ] Profile Page: pulling down the profile page should blur and resize the header image.
 * [x] Profile view should include that user's timeline
 
 The following **additional** features are implemented:
