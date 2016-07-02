@@ -4,7 +4,7 @@ This project is a Twitter client app.
 
 Submitted by: Jeanne Luning Prak
 
-Time spent: 20 hours spent in total
+Time spent: 40 hours spent in total
 
 ## User Stories
 
@@ -25,7 +25,7 @@ The following **optional** features are implemented:
 * [x] User can load more tweets once they reach the bottom of the feed using infinite loading similar to the actual Twitter client.
 * [x] User can unfavorite and it decrements the favorite count. 
 * [x] User can unretweet and it decrements the favorite count. 
-* [ ] When composing, there is a countdown for the number of characters remaining for the tweet (out of 140)
+* [x] When composing, there is a countdown for the number of characters remaining for the tweet (out of 140)
 * [ ] After creating a new tweet, a user can view it in the timeline immediately without refetching the timeline from the network.
 * [x] User can reply to any tweet, and replies should are prefixed with the username and the reply_id is set when posting the tweet
 * [ ] Links in tweets are clickable
@@ -36,17 +36,21 @@ The following **optional** features are implemented:
 The following **additional** features are implemented:
 - [x] User interface is created entirely in code without using interface builder
 - [x] Twitter icons used for retweet, favorite, and reply
-- 
+- [x] User can view images embeded in posts
+- [x] Retweets show icon of original poster with link to timeline
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
+
+<a href="https://www.youtube.com/watch?v=W7UdBF1ir2M">Link to Video</a>
 
 Video created with QuickTime Player
 
 ## Notes
 
+I made this without using interface builder to better learn how to create interfaces programatically, so that when I collaborate on my app with my team, I will be able to use version control without merge conflicts.
+
 ## Questions
-1. 
 
 ## Credits
 
